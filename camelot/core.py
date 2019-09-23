@@ -212,7 +212,11 @@ class TextEdges(object):
         with open('sorted_test_relevant_textedges.txt', 'w') as test_writer:
             for te in relevant_textedges:
                 test_writer.write('start of a te:');
-                test_writer.write(te.get_text());
+                str_to_write = te.get_text().encode('utf-8').decode(encoding='utf-8');
+                #print('deocded string: ', str_to_write);
+                #print('type of decoded string: ', type(str_to_write))
+                #test_writer.write(te.get_text());
+                test_writer.write(str_to_write);
 
         table_areas = {}
         for te in relevant_textedges:

@@ -268,9 +268,10 @@ class Stream(BaseParser):
         # Added by Peng: output the type of textlines
         print('type of textlines: ', type(textlines));
         #add by peng: print out the textlines
-        with open('textlines_output.txt','w') as test_f:
-            for textline in textlines:    
-                test_f.write(str(textline));
+        with open('textlines_output.txt','w', encoding = 'utf-8') as test_f:
+            for textline in textlines:
+                str_textline = str(textline).encode('utf-8').decode(encoding='utf-8');
+                test_f.write(str(str_textline));
                 test_f.write('\n')
         print('textedges before get_table_areas: ', textedges);
 
@@ -298,9 +299,12 @@ class Stream(BaseParser):
         # select relevant edges
         relevant_textedges = textedges.get_relevant()
         # added by peng, output the texts of relevant_textedges to temp file.
-        with open('test_relevant_textedges.txt', 'w') as test_writer:
+        with open('test_relevant_textedges.txt', 'w', encoding='utf-8') as test_writer:
+            print('test print of te.get_text()');
             for te in relevant_textedges:
-                test_writer.write(te.get_text());
+                #print(te.get_text());
+                #test_writer.write(te.get_text());
+                str_text = str(te.get_text()).encode('utf-8').decode('')
 
         self.textedges.extend(relevant_textedges);
         #print('type of self textedges: ', type(self.textedges));
@@ -321,13 +325,15 @@ class Stream(BaseParser):
             #print('horizontal text: ', self.horizontal_text[90]);
             #temp_horizontal_text = self.horizontal_text[92];
             #Added by peng, write the hor_text into a file
-            with open('temp_hor_text.txt', 'w') as writer:
+            with open('temp_hor_text.txt', 'w', encoding='utf-8') as writer:
                 for text_item in hor_text:
+                    str_text_item = text_item.get_text().encode('utf-8').decode(encoding=  'utf-8');
+                    
                     writer.write(str(text_item.x0)+'\t'
                      + str(text_item.x1)+'\t'
                      + str(text_item.y0)+'\t'
                      + str(text_item.y1)+'\t'
-                     + text_item.get_text());
+                     + str_text_item);
 
             #added by peng: check if the table_regions is None
             print('table regions: ', self.table_regions);
