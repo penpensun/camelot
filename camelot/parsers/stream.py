@@ -265,11 +265,45 @@ class Stream(BaseParser):
         # sort textlines in reading order
         textlines.sort(key=lambda x: (-x.y0, x.x0))
         textedges = TextEdges(edge_tol=self.edge_tol)
+        # Added by Peng: output the type of textlines
+        print('type of textlines: ', type(textlines));
+        #add by peng: print out the textlines
+        with open('textlines_output.txt','w') as test_f:
+            for textline in textlines:    
+                test_f.write(str(textline));
+                test_f.write('\n')
+        print('textedges before get_table_areas: ', textedges);
+
         # generate left, middle and right textedges
         textedges.generate(textlines)
+        # added by Peng
+        print('textedges type: ', type(textedges));
+        print('self textedges type: ', type(self.textedges));
+        print(self.textedges);
+        # output textedges
+        # added by peng, define a small list writer.
+        def write_list(writer, list):
+            for item in list:
+                writer.write(str(item)+'\n');
+        
+        # with open('textedges.txt','w') as test_writer:
+        #     test_writer.write('left:');
+        #     #test_writer.write(str(textedges._textedges['left']));
+        #     write_list(test_writer, textedges._textedges['left']);
+        #     test_writer.write('middle:');
+        #     write_list(test_writer, textedges._textedges['middle']);
+        #     test_writer.write('right: ');
+        #     write_list(test_writer, textedges._textedges['right']);
+
         # select relevant edges
         relevant_textedges = textedges.get_relevant()
-        self.textedges.extend(relevant_textedges)
+        # added by peng, output the texts of relevant_textedges to temp file.
+        with open('test_relevant_textedges.txt', 'w') as test_writer:
+            for te in relevant_textedges:
+                test_writer.write(te.get_text());
+
+        self.textedges.extend(relevant_textedges);
+        #print('type of self textedges: ', type(self.textedges));
         # guess table areas using textlines and relevant edges
         table_bbox = textedges.get_table_areas(textlines, relevant_textedges)
         # treat whole page as table area if no table areas found
@@ -282,19 +316,36 @@ class Stream(BaseParser):
         self.textedges = []
         if self.table_areas is None:
             hor_text = self.horizontal_text
+            #added by peng: print out horizontal_text
+            #print('type of horizontal text: ', type(self.horizontal_text));
+            #print('horizontal text: ', self.horizontal_text[90]);
+            #temp_horizontal_text = self.horizontal_text[92];
+            #Added by peng, write the hor_text into a file
+            with open('temp_hor_text.txt', 'w') as writer:
+                for text_item in hor_text:
+                    writer.write(str(text_item.x0)+'\t'
+                     + str(text_item.x1)+'\t'
+                     + str(text_item.y0)+'\t'
+                     + str(text_item.y1)+'\t'
+                     + text_item.get_text());
+
+            #added by peng: check if the table_regions is None
+            print('table regions: ', self.table_regions);
             if self.table_regions is not None:
                 # filter horizontal text
                 hor_text = []
                 for region in self.table_regions:
-                    x1, y1, x2, y2 = region.split(",")
-                    x1 = float(x1)
-                    y1 = float(y1)
-                    x2 = float(x2)
-                    y2 = float(y2)
+                    x1, y1, x2, y2 = region
                     region_text = text_in_bbox((x1, y2, x2, y1), self.horizontal_text)
                     hor_text.extend(region_text)
             # find tables based on nurminen's detection algorithm
             table_bbox = self._nurminen_table_detection(hor_text)
+            #added by peng: check the table_bbox
+            print('type of table bbox: ', type(table_bbox));
+            print('table bbox: ', table_bbox);
+            #added by peng: traverse the dictionary of table_bbox
+            for table_key in table_bbox:
+                print(table_key);
         else:
             table_bbox = {}
             for area in self.table_areas:

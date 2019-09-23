@@ -33,14 +33,13 @@ class PDFHandler(object):
         self.filepath = filepath
         if not filepath.lower().endswith('.pdf'):
             raise NotImplementedError("File format not supported")
-
+        self.pages = self._get_pages(self.filepath, pages)
         if password is None:
             self.password = ''
         else:
             self.password = password
             if sys.version_info[0] < 3:
                 self.password = self.password.encode('ascii')
-        self.pages = self._get_pages(self.filepath, pages)
 
     def _get_pages(self, filepath, pages):
         """Converts pages string to list of ints.
@@ -161,4 +160,4 @@ class PDFHandler(object):
                 t = parser.extract_tables(p, suppress_stdout=suppress_stdout,
                                           layout_kwargs=layout_kwargs)
                 tables.extend(t)
-        return TableList(sorted(tables))
+        return TableList(tables)
