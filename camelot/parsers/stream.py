@@ -303,8 +303,8 @@ class Stream(BaseParser):
             print('test print of te.get_text()');
             for te in relevant_textedges:
                 #print(te.get_text());
-                #test_writer.write(te.get_text());
-                str_text = str(te.get_text()).encode('utf-8').decode('')
+                str_text = str(te.get_text()).encode('utf-8').decode(encoding= 'utf-8')
+                test_writer.write(str(te.is_valid)+'\t'+ str(te.intersections)+'\t'+ te.get_text());
 
         self.textedges.extend(relevant_textedges);
         #print('type of self textedges: ', type(self.textedges));

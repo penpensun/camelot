@@ -92,6 +92,7 @@ class TextEdge(object):
                 self.is_valid = True
 
 
+
 class TextEdges(object):
     """Defines a dict of left, right and middle text edges found on
     the PDF page. The dict has three keys based on the alignments,
@@ -139,24 +140,19 @@ class TextEdges(object):
         for align in ['left', 'right', 'middle']:
             x_coord = self.get_x_coord(textline, align)
             idx = self.find(x_coord, align)
+            #added by peng, check the '-' line
+            print(textline.get_text());
+            if textline.get_text() == '-':
+                print('equals dash: ', textline)
             if idx is None:
                 self.add(textline, align)
             else:
-                #print('align: ', align);
-                #print('text: ', textline.get_text());
                 #commented by peng, need to use the newer version of update_coords
                 #self._textedges[align][idx].update_coords(
                  #   x_coord, textline.y0, edge_tol=self.edge_tol)
-                #added by peng.
                 self._textedges[align][idx].update_coords(
                     x_coord, textline.y0, textline.get_text(), edge_tol=self.edge_tol)
-        # added by Peng
-        # count the increment of TextEdges
-        # print('count of left: ',len(self._textedges['left']),\
-        #     '  count of middle: ', len(self._textedges['middle']),\
-        #     '  count of right: ', len(self._textedges['right']))
-
-
+        
     def generate(self, textlines):
         """Generates the text edges dict based on horizontal text
         rows.
@@ -180,11 +176,6 @@ class TextEdges(object):
         # get vertical textedges that intersect maximum number of
         # times with horizontal textlines
         relevant_align = max(intersections_sum.items(), key=itemgetter(1))[0]
-        # added by peng
-        #print('type of relevant align: ', type(relevant_align));
-        #print('relevant align: ', relevant_align);
-        #print('relevant align text edges: ', self._textedges[relevant_align]);
-        # output all relevant textedges
         
         return self._textedges[relevant_align]
 
@@ -199,13 +190,7 @@ class TextEdges(object):
             # add a constant since table headers can be relatively up
             y1 = area[3] + average_row_height * 5
             return (x0, y0, x1, y1)
-        # added by peng:
-        # print('type of textlines: ', type(textlines))
-        #print('type of element of textlines: ', type(textlines[0]));
-        #print('type of relevant_textedges, ', type(relevant_textedges));
-        # print('type of element of textedges: ', type(relevant_textedges[0]));
-        #print('relevant_textedges[0]: ', relevant_textedges[10]);
-        #print('textline: ', textlines[10]);
+        
         # sort relevant textedges in reading order
         relevant_textedges.sort(key=lambda te: (-te.y0, te.x))
         # Added by peng, output the sorted relevant textedges
@@ -213,19 +198,13 @@ class TextEdges(object):
             for te in relevant_textedges:
                 test_writer.write('start of a te:');
                 str_to_write = te.get_text().encode('utf-8').decode(encoding='utf-8');
-                #print('deocded string: ', str_to_write);
-                #print('type of decoded string: ', type(str_to_write))
                 #test_writer.write(te.get_text());
                 test_writer.write(str_to_write);
 
         table_areas = {}
         for te in relevant_textedges:
             if te.is_valid:
-                #Added by Peng
-                #print('valid textedge: ', te.get_text());
                 if not table_areas:
-                    #added by peng
-                    print('not table_areas: ', te.get_text());
                     table_areas[(te.x, te.y0, te.x, te.y1)] = None
                 else:
                     found = None
@@ -235,10 +214,8 @@ class TextEdges(object):
                             found = area
                             break
                     if found is None:
-                        print('table_areas: ', te.get_text());
                         table_areas[(te.x, te.y0, te.x, te.y1)] = None
                     else:
-                        print('table_areas found: ', te.get_text());
                         table_areas.pop(found)
                         updated_area = (
                             found[0], min(te.y0, found[1]), max(found[2], te.x), max(found[3], te.y1))
