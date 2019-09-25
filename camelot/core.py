@@ -141,9 +141,6 @@ class TextEdges(object):
             x_coord = self.get_x_coord(textline, align)
             idx = self.find(x_coord, align)
             #added by peng, check the '-' line
-            print(textline.get_text());
-            if textline.get_text() == '-':
-                print('equals dash: ', textline)
             if idx is None:
                 self.add(textline, align)
             else:
@@ -158,7 +155,9 @@ class TextEdges(object):
         rows.
         """
         for tl in textlines:
-            if len(tl.get_text().strip()) > 1: # TODO: hacky
+            #if len(tl.get_text().strip()) > 1: # TODO: hacky
+            # change by peng
+            if len(tl.get_text().strip()) >=1:
                 self.update(tl)
 
     def get_relevant(self):

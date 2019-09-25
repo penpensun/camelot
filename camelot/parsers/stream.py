@@ -350,6 +350,7 @@ class Stream(BaseParser):
             print('type of table bbox: ', type(table_bbox));
             print('table bbox: ', table_bbox);
             #added by peng: traverse the dictionary of table_bbox
+            print('print out table key: ');
             for table_key in table_bbox:
                 print(table_key);
         else:
