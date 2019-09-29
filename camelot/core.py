@@ -140,7 +140,7 @@ class TextEdges(object):
         for align in ['left', 'right', 'middle']:
             x_coord = self.get_x_coord(textline, align)
             idx = self.find(x_coord, align)
-            #added by peng, check the '-' line
+            
             if idx is None:
                 self.add(textline, align)
             else:
@@ -149,7 +149,11 @@ class TextEdges(object):
                  #   x_coord, textline.y0, edge_tol=self.edge_tol)
                 self._textedges[align][idx].update_coords(
                     x_coord, textline.y0, textline.get_text(), edge_tol=self.edge_tol)
-        
+    
+    # added by Peng
+    def get_text_edges(self):
+        return self._textedges;
+
     def generate(self, textlines):
         """Generates the text edges dict based on horizontal text
         rows.

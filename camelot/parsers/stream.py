@@ -287,14 +287,12 @@ class Stream(BaseParser):
             for item in list:
                 writer.write(str(item)+'\n');
         
-        # with open('textedges.txt','w') as test_writer:
-        #     test_writer.write('left:');
-        #     #test_writer.write(str(textedges._textedges['left']));
-        #     write_list(test_writer, textedges._textedges['left']);
-        #     test_writer.write('middle:');
-        #     write_list(test_writer, textedges._textedges['middle']);
-        #     test_writer.write('right: ');
-        #     write_list(test_writer, textedges._textedges['right']);
+        with open('test_textedges_left.txt', 'w', encoding='utf-8') as test_writer:
+            print('test print of te.get_text()');
+            for te in textedges.get_text_edges()['left']:
+                #print(te.get_text());
+                str_text = str(te.get_text()).encode('utf-8').decode(encoding= 'utf-8')
+                test_writer.write(str(te.is_valid)+'\t'+ str(te.intersections)+'\t'+ te.get_text());
 
         # select relevant edges
         relevant_textedges = textedges.get_relevant()
