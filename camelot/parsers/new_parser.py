@@ -11,6 +11,10 @@ from ..core import TextEdges, Table
 from ..utils import (text_in_bbox, get_table_index, compute_accuracy,
                      compute_whitespace)
 
+from ..image_processing import adaptive_threshold;
+
+from .lattice import Lattice;
+
 class NewParser(BaseParser):
 
     def __init__(self, y_tol=0.5):
@@ -21,6 +25,30 @@ class NewParser(BaseParser):
         self._generate_layout(filename, {});
         #print(self.horizontal_text);
         self.align_lines();
+
+
+    def test_find_lines(self, filename, imagename):
+        lattice_parser = Lattice();
+        lattice_parser._generate_layout(filename, {});
+        #lattice_parser._generate_image();
+        #print(lattice_parser.imagename);
+        image, threshold = adaptive_threshold(imagename, \
+            process_background=False, 
+            blocksize=lattice_parser.threshold_blocksize, 
+            c = lattice_parser.threshold_constant)
+        #print(image);
+        print('type of image: ', type(image));
+        print('shape of image: ', image.shape);
+        from PIL import Image;
+        converted_img = Image.fromarray(image);
+        converted_img.save('./converted_img.png');
+        converted_img.show();
+
+    def test_show_coordinates(self, filename):
+        self._generate_layout(filename, {});
+        sorted_hor_text=  sorted(self.horizontal_text, key = lambda x: -x.y0);
+        for i in sorted_hor_text:
+            print(i.get_text()[:-1], '  ', i.y0, '  ', i.y1);
 
     def align_lines (self):
         lines = [];

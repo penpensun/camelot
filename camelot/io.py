@@ -105,9 +105,3 @@ def read_pdf(filepath, pages='1', password=None, flavor='lattice',
         tables = p.parse(flavor=flavor, suppress_stdout=suppress_stdout,
                          layout_kwargs=layout_kwargs, **kwargs)
         return tables
-
-# changed by peng
-if __name__ == '__main__':
-    sample_pdf_file = '/home/peng/Workspace/data/finance_helper/annual_reports/test_ICBC_tables.pdf';
-    tables = read_pdf(sample_pdf_file, flavor='stream')
-    print(tables);
