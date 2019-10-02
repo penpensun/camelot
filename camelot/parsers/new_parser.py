@@ -12,6 +12,7 @@ from ..utils import (text_in_bbox, get_table_index, compute_accuracy,
                      compute_whitespace)
 
 from ..image_processing import adaptive_threshold;
+from ..image_processing import find_lines;
 
 from .lattice import Lattice;
 
@@ -42,7 +43,57 @@ class NewParser(BaseParser):
         from PIL import Image;
         converted_img = Image.fromarray(image);
         converted_img.save('./converted_img.png');
-        converted_img.show();
+        # converted_img.show();
+        # Find lines
+        mask, segments = find_lines(threshold, regions = None, direction='horizontal', \
+            line_scale =lattice_parser.line_scale);
+        
+        # the height and width of the image
+        print('the height of the image: ', image.shape[0]);
+        print('the width of the image: ', image.shape[1]);
+
+        print('type of mask: ', type(mask));
+        line_coord = np.argwhere(mask >0);
+        print('coord of line: ');
+        print(line_coord);
+        print('shape of coordinate of line: ', line_coord.shape);
+        print('unique y: ');
+        print(np.unique(line_coord[:, 0]));
+        unique_y_coords = np.unique(line_coord[:, 0]);
+
+        line_image = Image.fromarray(mask);
+        line_image.save('./line_img.png');
+        # test case of line coordinate [0]
+        max_img_y = image.shape[0];
+        max_img_x = image.shape[1];
+        max_pdf_y = 842;
+        max_pdf_x = 595;
+
+        converted_y_coords = []
+        print('line coordinate y_0 :', line_coord[0,0]);
+        print('converted line coordinate converted y coords: ', 
+            self.convert_img_y_to_pdf(line_coord[0,0], max_img_y = max_img_y, max_pdf_y = max_pdf_y));
+        for y_coord in unique_y_coords:
+            converted_y_coords.append( self.convert_img_y_to_pdf(y_coord, \
+                max_img_y = max_img_y, \
+                max_pdf_y = max_pdf_y));
+            print('converted y coord: ', 
+                self.convert_img_y_to_pdf(y_coord, \
+                max_img_y = max_img_y, \
+                max_pdf_y = max_pdf_y));
+
+
+
+    def convert_img_coords_to_pdf(self, img_x, img_y, max_img_x, max_img_y, max_pdf_x, max_pdf_y):
+        pdf_x = self.convert_img_x_to_pdf(img_x, max_img_x, max_pdf_x);
+        pdf_y = self.convert_img_y_to_pdf(img_y, max_img_y, max_pdf_y);
+        return (pdf_x, pdf_y);
+
+    def convert_img_x_to_pdf(self, img_x, max_img_x, max_pdf_x):
+        return round(img_x/max_img_x * max_pdf_x, 2)
+    
+    def convert_img_y_to_pdf(self, img_y, max_img_y, max_pdf_y):
+        return round((max_img_y - img_y) / max_img_y * max_pdf_y, 2);
 
     def test_show_coordinates(self, filename):
         self._generate_layout(filename, {});
