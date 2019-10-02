@@ -12,6 +12,7 @@ from ..utils import (text_in_bbox, get_table_index, compute_accuracy,
                      compute_whitespace)
 
 from ..image_processing import adaptive_threshold;
+from ..image_processing import find_lines;
 
 from .lattice import Lattice;
 
@@ -42,7 +43,20 @@ class NewParser(BaseParser):
         from PIL import Image;
         converted_img = Image.fromarray(image);
         converted_img.save('./converted_img.png');
-        converted_img.show();
+        #converted_img.show();
+        converted_thresh_img = Image.fromarray(threshold);
+        converted_thresh_img.save('./converted_thresh_img.png');
+        #converted_thresh_img.show();
+        print('threshold.shape: ', threshold.shape);
+        #fine line
+        mask, segment = find_lines(threshold, regions= None, direction = 'horizontal', \
+            line_scale=  lattice_parser.line_scale, iterations = lattice_parser.iterations);
+        print('mask: ');
+        print('type of mask: ', type(mask));
+        print('shape of mask: ', mask.shape);
+        findline_thresh_img = Image.fromarray(mask);
+        findline_thresh_img.save('./test_find_line_img.png');
+
 
     def test_show_coordinates(self, filename):
         self._generate_layout(filename, {});
