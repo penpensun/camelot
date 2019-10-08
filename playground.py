@@ -23,6 +23,6 @@ def test_find_line():
 
 if __name__ == '__main__':
     #run_stream_parse();
-    #run_self_defined_parse();
+    run_self_defined_parse();
     #test_show_coordinate();
-    test_find_line();
+    #test_find_line();
